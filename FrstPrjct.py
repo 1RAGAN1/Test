@@ -2,7 +2,7 @@ import sys
 import pandas as pd
 from sklearn.tree import DecisionTreeRegressor as dtr
 
-# *****************Melbourne data********************
+# *****************Import Melbourne data********************
 melbourne_file_path = 'data/Melb/melb_data.csv'  
 # read the data and store data in DataFrame titled melbourne_data
 melbourne_data = pd.read_csv(melbourne_file_path) 
@@ -11,7 +11,7 @@ melbourne_data = pd.read_csv(melbourne_file_path)
 print(melbourne_data[['Price']].head())
 #print(melbourne_data.columns)
 
-# **********************Iowa data*********************
+# **********************Import Iowa data*********************
 iowa_file_path = 'data/Iowa/train.csv'
 # Fill in the line below to read the file into a variable iowa_data
 iowa_data = pd.read_csv(iowa_file_path)
@@ -28,7 +28,7 @@ newest_home_age = 2025 - iowa_data['YearBuilt'].max()
 print(iowa_data[['SalePrice']].head())
 #sys.exit(0)
 
-# *********************************Prepare melbourne data***********************************
+# ****************Prepare melbourne data*********************
 # dropna drops missing values (think of na as "not available")
 melbourne_data = melbourne_data.dropna(axis=0)
 # assign Price col to y
@@ -39,7 +39,7 @@ XM = melbourne_data[melbourne_features]
 #print(XM.describe())
 #print(XM.head())
 
-# *********************************Define model Melborne***********************************
+# *****************Define model Melborne*********************
 melbourne_model = dtr(random_state=1)
 # Fit model to data
 melbourne_model.fit(XM, yM)
@@ -48,14 +48,14 @@ print(XM.head())
 print("The predictions are")
 print(melbourne_model.predict(XM.head()))
 
-# *********************************Prepare iowa data***********************************
+# *********************Prepare iowa data*********************
 yI = iowa_data.SalePrice
 iowa_features = ['LotArea', 'YearBuilt', '1stFlrSF', '2ndFlrSF', 'FullBath', 'BedroomAbvGr', 'TotRmsAbvGrd']
 XI = iowa_data[iowa_features]
 #print(XI.describe())
 #print(XI.head())
 
-# *********************************Define model Iowa***********************************
+# ************************Define model Iowa******************
 iowa_model = dtr(random_state=1)
 # Fit model to data
 iowa_model.fit(XI, yI)
