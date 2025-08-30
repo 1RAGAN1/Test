@@ -1,6 +1,6 @@
 import sys
 import pandas as pd
-import getMEA as getMEA
+import getMAE as getMAE
 from sklearn.tree import DecisionTreeRegressor as dtr
 from sklearn.metrics import mean_absolute_error as mae
 from sklearn.model_selection import train_test_split as tts
@@ -91,16 +91,16 @@ print(mae(val_yI, val_iowa_predictions))
 
 #*************Differ max_leaf_nodes*****************
 for max_leaf_nodes in [400, 450, 500, 550, 600]:
-    my_mae = getMEA.get_mae(max_leaf_nodes, train_XM, val_XM, train_yM, val_yM)
+    my_mae = getMAE.get_mae(max_leaf_nodes, train_XM, val_XM, train_yM, val_yM)
     print("Max leaf nodes: %d  \t\t Mean Absolute Error:  %d" %(max_leaf_nodes, my_mae))
 
 #*************Differ max_leaf_nodes*****************
 for max_leaf_nodes in [5, 50, 500, 1000, 5000]:
-    my_mae = getMEA.get_mae(max_leaf_nodes, train_XI, val_XI, train_yI, val_yI)
+    my_mae = getMAE.get_mae(max_leaf_nodes, train_XI, val_XI, train_yI, val_yI)
     print("Max leaf nodes: %d  \t\t Mean Absolute Error:  %d" %(max_leaf_nodes, my_mae))
 #*************Find best max_leaf_nodes Iowa*****************
 candidate_max_leaf_nodes = [5, 50, 500, 1000, 5000]
-scores = {leaf_size: getMEA.get_mae(leaf_size, train_XI, val_XI, train_yI, val_yI) for leaf_size in candidate_max_leaf_nodes}
+scores = {leaf_size: getMAE.get_mae(leaf_size, train_XI, val_XI, train_yI, val_yI) for leaf_size in candidate_max_leaf_nodes}
 best_tree_size = min(scores, key=scores.get)
 print(best_tree_size)
 
