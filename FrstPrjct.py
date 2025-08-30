@@ -1,6 +1,10 @@
 import sys
 import pandas as pd
+import getMEA as getMEA
 from sklearn.tree import DecisionTreeRegressor as dtr
+from sklearn.metrics import mean_absolute_error as mae
+from sklearn.model_selection import train_test_split as tts
+from sklearn.ensemble import RandomForestRegressor as rfr
 
 # *****************Import Melbourne data********************
 melbourne_file_path = 'data/Melb/melb_data.csv'  
@@ -47,6 +51,8 @@ print("Making predictions for the following 5 houses:")
 print(XM.head())
 print("The predictions are")
 print(melbourne_model.predict(XM.head()))
+predicted_melb_prices = melbourne_model.predict(XM)
+
 
 # *********************Prepare iowa data*********************
 yI = iowa_data.SalePrice
@@ -65,3 +71,41 @@ print("The predictions are")
 print(iowa_model.predict(XI.head()))
 #print('full predection')
 #print(iowa_model.predict(XI))
+
+#**************Melbourne Validation(Bad Method)****************
+print(mae(yM, predicted_melb_prices))
+
+#**************Melbourne Validation(Good Method)****************
+train_XM, val_XM, train_yM, val_yM = tts(XM, yM, random_state=1)
+melbourne_model= dtr(random_state=1)
+melbourne_model.fit(train_XM, train_yM)
+val_melb_predictions = melbourne_model.predict(val_XM)
+print(mae(val_yM, val_melb_predictions))
+
+#**************Iowa Validation(Good Method)****************
+train_XI, val_XI, train_yI, val_yI = tts(XI, yI, random_state=1)
+iowa_model= dtr()
+iowa_model.fit(train_XI, train_yI)
+val_iowa_predictions = iowa_model.predict(val_XI)
+print(mae(val_yI, val_iowa_predictions))
+
+#*************Differ max_leaf_nodes*****************
+for max_leaf_nodes in [400, 450, 500, 550, 600]:
+    my_mae = getMEA.get_mae(max_leaf_nodes, train_XM, val_XM, train_yM, val_yM)
+    print("Max leaf nodes: %d  \t\t Mean Absolute Error:  %d" %(max_leaf_nodes, my_mae))
+
+#*************Differ max_leaf_nodes*****************
+for max_leaf_nodes in [5, 50, 500, 1000, 5000]:
+    my_mae = getMEA.get_mae(max_leaf_nodes, train_XI, val_XI, train_yI, val_yI)
+    print("Max leaf nodes: %d  \t\t Mean Absolute Error:  %d" %(max_leaf_nodes, my_mae))
+#*************Find best max_leaf_nodes Iowa*****************
+candidate_max_leaf_nodes = [5, 50, 500, 1000, 5000]
+scores = {leaf_size: getMEA.get_mae(leaf_size, train_XI, val_XI, train_yI, val_yI) for leaf_size in candidate_max_leaf_nodes}
+best_tree_size = min(scores, key=scores.get)
+print(best_tree_size)
+
+#****Forest Model Melborne****
+forest_model = rfr(random_state=1)
+forest_model.fit(train_XM, train_yM)
+melb_preds = forest_model.predict(val_XM)
+print(mae(val_yM, melb_preds))
